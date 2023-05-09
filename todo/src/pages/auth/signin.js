@@ -17,7 +17,7 @@ export default function Signin() {
                         bg-blue-500 text-white
                           border border-blue-500 rounded
                         hover:bg-white hover:text-blue-500`}
-                onClick={() => router.push("/")}
+                onClick={ () => router.push("/")}
               >
                 Go to Home
               </button>
@@ -43,7 +43,7 @@ export default function Signin() {
                         bg-blue-500 text-white
                           border border-blue-500 rounded
                         hover:bg-white hover:text-blue-500`}
-                onClick={() => signIn()}
+                onClick={async() => await signIn()}
               >
                 Sign in
               </button>
