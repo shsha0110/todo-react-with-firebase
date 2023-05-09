@@ -4,9 +4,10 @@
   할 일 목록의 추가, 삭제, 완료 상태 변경 등의 기능을 구현하였습니다.
 */
 import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
 import TodoItem from "@/components/TodoItem";
 import styles from "@/styles/TodoList.module.css";
-import { Timestamp } from 'firebase/firestore';
 
 // firebase 관련 모듈을 불러옵니다.
 import { db } from "@/firebase";
@@ -19,6 +20,7 @@ import {
   updateDoc,
   deleteDoc,
   orderBy,
+  where,
 } from "firebase/firestore";
 
 // DB의 todos 컬렉션 참조를 만듭니다. 컬렉션 사용시 잘못된 컬렉션 이름 사용을 방지합니다.
@@ -29,12 +31,21 @@ const TodoList = () => {
   // 상태를 관리하는 useState 훅을 사용하여 할 일 목록과 입력값을 초기화합니다.
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
-  
+
+  const { data } = useSession();
+
   const getTodos = async () => {
     // Firestore 쿼리를 만듭니다.
     // const q = query(todoCollection);
     // const q = query(collection(db, "todos"), where("user", "==", user.uid));
-    const q = query(todoCollection, orderBy("date", "asc"));
+    // const q = query(todoCollection, orderBy("datetime", "asc"));
+    if (!data?.user?.name) return;
+
+    const q = query(
+      todoCollection,
+      where("userId", "==", data?.user?.id),
+      orderBy("datetime", "asc")
+    );
 
     // Firestore 에서 할 일 목록을 조회합니다.
     const results = await getDocs(q);
@@ -52,7 +63,7 @@ const TodoList = () => {
 
   useEffect(() => {
     getTodos();
-  }, []);
+  }, [data]);
 
   // addTodo 함수는 입력값을 이용하여 새로운 할 일을 목록에 추가하는 함수입니다.
   const addTodo = async () => {
@@ -66,16 +77,21 @@ const TodoList = () => {
     // }
     // ...todos => {id: 1, text: "할일1", completed: false}, {id: 2, text: "할일2", completed: false}}, ..
 
-    const currentDate = Timestamp.now();
+    const datetime = new Date().toISOString();
+
     // Firestore 에 추가한 할 일을 저장합니다.
     const docRef = await addDoc(todoCollection, {
+      userId: data?.user?.id,
       text: input,
       completed: false,
-      date: currentDate
+      datetime: datetime,
     });
 
     // id 값을 Firestore 에 저장한 값으로 지정합니다.
-    setTodos([...todos, { id: docRef.id, text: input, completed: false, date: currentDate }]);
+    setTodos([
+      ...todos,
+      { id: docRef.id, text: input, datetime: datetime, completed: false },
+    ]);
     setInput("");
   };
 
@@ -83,7 +99,7 @@ const TodoList = () => {
   const toggleTodo = (id) => {
     // 할 일 목록에서 해당 id를 가진 할 일의 완료 상태를 반전시킵니다.
     const newTodos = todos.map((todo) => {
-      if (todo.id === id)  {
+      if (todo.id === id) {
         // Firestore 에서 해당 id를 가진 할 일을 찾아 완료 상태를 업데이트합니다.
         const todoDoc = doc(todoCollection, id);
         updateDoc(todoDoc, { completed: !todo.completed });
@@ -116,7 +132,7 @@ const TodoList = () => {
   return (
     <div className={styles.container}>
       <h1 className="text-xl mb-4 font-bold underline underline-offset-4 decoration-wavy">
-        Todo List
+        {data?.user?.name}'s Todo List
       </h1>
       {/* 할 일을 입력받는 텍스트 필드입니다. */}
       <input
