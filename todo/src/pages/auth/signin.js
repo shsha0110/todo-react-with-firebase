@@ -18,7 +18,7 @@ export default function Signin() {
                   console.log("Document data:", doc.data());
 
                   if(userDoc.mbti === null || userDoc.mbti === "") {
-                    router.push('/auth/signin/ask'); // if mbti is empty, redirect to ask
+                    router.push('/auth/signedIn/ask'); // if mbti is empty, redirect to ask
                   }
 
               } else {
@@ -30,7 +30,7 @@ export default function Signin() {
                   })
                   .then(() => {
                       console.log("Document successfully written!");
-                      router.push('/auth/signin/ask'); // redirect to the page to ask for mbti and nickname
+                      router.push('/auth/signedIn/ask'); // redirect to the page to ask for mbti and nickname
                   })
                   .catch((error) => {
                       console.error("Error writing document: ", error);
