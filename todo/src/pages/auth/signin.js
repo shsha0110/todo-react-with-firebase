@@ -30,7 +30,7 @@ export default function Signin() {
                   })
                   .then(() => {
                       console.log("Document successfully written!");
-                      router.push('/ask'); // redirect to the page to ask for mbti and nickname
+                      router.push('/auth/signin/ask'); // redirect to the page to ask for mbti and nickname
                   })
                   .catch((error) => {
                       console.error("Error writing document: ", error);
