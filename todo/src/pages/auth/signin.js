@@ -9,11 +9,11 @@ export default function Signin() {
     const [user, setUser] = useState(null);
     const [mbti, setMbti] = useState("");
     const [nickname, setNickname] = useState("");
-    
+
     useEffect(() => {
         if(session){
             const docRef = db.collection("users").doc(session.user.email);
-            
+
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     const userData = doc.data();
@@ -21,19 +21,7 @@ export default function Signin() {
                     setMbti(userData.mbti);
                     setUser(userData);
                 } else {
-                    db.collection("users").doc(session.user.email).set({
-                      name: session.user.name,
-                      email: session.user.email,
-                      mbti: '', // initially empty
-                      nickname: '' // initially empty
-                  })
-                  .then(() => {
-                      console.log("Document successfully written!");
-                      router.push('/auth/signin/ask'); // redirect to the page to ask for mbti and nickname
-                  })
-                  .catch((error) => {
-                      console.error("Error writing document: ", error);
-                  });
+                    setUser({name: session.user.name, email: session.user.email, mbti: '', nickname: ''});
                 }
             }).catch((error) => {
                 console.log("Error getting document:", error);
@@ -51,7 +39,7 @@ export default function Signin() {
         }, { merge: true })
         .then(() => {
             console.log("Document successfully updated!");
-            router.push('/auth/signin'); // redirect back to home
+            router.push('/'); // redirect back to home
         })
         .catch((error) => {
             console.error("Error updating document: ", error);
