@@ -25,12 +25,12 @@ export default function Signin() {
                   db.collection("users").doc(session.user.email).set({
                       name: session.user.name,
                       email: session.user.email,
-                      mbti: '', // initially empty
-                      nickname: '' // initially empty
+                      mbti: 'INFJ', // initially empty
+                      nickname: 'KING' // initially empty
                   })
                   .then(() => {
                       console.log("Document successfully written!");
-                      router.push('/auth/signedIn/ask'); // redirect to the page to ask for mbti and nickname
+                      //router.push('/auth/signedIn/ask'); // redirect to the page to ask for mbti and nickname
                   })
                   .catch((error) => {
                       console.error("Error writing document: ", error);
