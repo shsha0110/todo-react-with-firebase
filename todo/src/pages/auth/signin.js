@@ -1,53 +1,44 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { useEffect, useState } from 'react';
-import { auth, db } from "@/firebase/index.js";
+import { db } from "@/firebase/index.js"; // the path to your firebase.js file
+import { useEffect } from 'react';
 
 export default function Signin() {
     const router = useRouter();
     const { data : session } = useSession();
-    const [user, setUser] = useState(null); // Add this line at the top of your component
 
     useEffect(() => {
-      if(session){
-          const docRef = db.collection("users").doc(session.user.email);
-          
-          docRef.get().then((doc) => {
-              if (doc.exists) {
-                  setUser(doc.data());
-                  console.log("Document data:", doc.data());
+        if(session){
+            // Fetch the Firestore document
+            const docRef = db.collection("users").doc(session.user.email);
 
-                  // if(userDoc.mbti === null || userDoc.mbti === "") {
-                  //   router.push('/auth/signedIn/ask'); // if mbti is empty, redirect to ask
-                  // }
-
-              } else {
-                  console.log(db.collection("users").doc(session.user.email))
-                  db.collection("users").doc(session.user.email).set({
-                      name: session.user.name,
-                      email: session.user.email,
-                      mbti: 'INFJ', // initially empty
-                      nickname: 'KING' // initially empty
-                  })
-                  .then(() => {
-                      console.log("Document successfully written!");
-                      //router.push('/auth/signedIn/ask'); // redirect to the page to ask for mbti and nickname
-                  })
-                  .catch((error) => {
-                      console.error("Error writing document: ", error);
-                  });
-              }
-          }).catch((error) => {
-              console.log("Error getting document:", error);
-          });
-      }
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    console.log("Document data:", doc.data());
+                } else {
+                    // If no document exists, create a new one with the user's session information
+                    db.collection("users").doc(session.user.email).set({
+                        name: session.user.name,
+                        email: session.user.email
+                    })
+                    .then(() => {
+                        console.log("Document successfully written!");
+                    })
+                    .catch((error) => {
+                        console.error("Error writing document: ", error);
+                    });
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        }
     }, [session]);
-  
+
     return (
         <div className="flex justify-center h-screen">
           {session ? (
             <div className="grid m-auto text-center">
-              <div className="m-4">Signed in as {user ? `${user.mbti} ${user.nickname}` : 'Loading...'}</div>
+              <div className="m-4">Signed in as {session.user.name? session.user.name : session.user.email}</div>
               <button
                 className={`w-40
                           justify-self-center
