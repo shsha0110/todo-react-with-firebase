@@ -6,23 +6,22 @@ import { auth, db } from "@/firebase/index.js";
 export default function Signin() {
     const router = useRouter();
     const { data : session } = useSession();
-    const [user, setUser] = useState(null); // Add this line at the top of your component
-
+    const [user, setUser] = useState(null);
+    const [mbti, setMbti] = useState("");
+    const [nickname, setNickname] = useState("");
+    
     useEffect(() => {
-      if(session){
-          const docRef = db.collection("users").doc(session.user.email);
-          
-          docRef.get().then((doc) => {
-              if (doc.exists) {
-                  setUser(doc.data());
-                  console.log("Document data:", doc.data());
-
-                  if(userDoc.mbti === null || userDoc.mbti === "") {
-                    router.push('/auth/signin/ask'); // if mbti is empty, redirect to ask
-                  }
-
-              } else {
-                  db.collection("users").doc(session.user.email).set({
+        if(session){
+            const docRef = db.collection("users").doc(session.user.email);
+            
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    setNickname(userData.nickname);
+                    setMbti(userData.mbti);
+                    setUser(userData);
+                } else {
+                    db.collection("users").doc(session.user.email).set({
                       name: session.user.name,
                       email: session.user.email,
                       mbti: '', // initially empty
@@ -35,42 +34,44 @@ export default function Signin() {
                   .catch((error) => {
                       console.error("Error writing document: ", error);
                   });
-              }
-          }).catch((error) => {
-              console.log("Error getting document:", error);
-          });
-      }
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        }
     }, [session]);
-  
+
+    const submit = async (e) => {
+        e.preventDefault();
+        const docRef = db.collection("users").doc(session.user.email);
+        
+        docRef.set({
+            nickname: nickname,
+            mbti: mbti
+        }, { merge: true })
+        .then(() => {
+            console.log("Document successfully updated!");
+            router.push('/auth/signin'); // redirect back to home
+        })
+        .catch((error) => {
+            console.error("Error updating document: ", error);
+        });
+    }
+
     return (
         <div className="flex justify-center h-screen">
           {session ? (
-            <div className="grid m-auto text-center">
-              <div className="m-4">Signed in as {user ? `${user.mbti} ${user.nickname}` : 'Loading...'}</div>
-              <div className="m-4">Signed in as {user.mbti} {user.nickname}</div>
-              <button
-                className={`w-40
-                          justify-self-center
-                          p-1 mb-4
-                        bg-blue-500 text-white
-                          border border-blue-500 rounded
-                        hover:bg-white hover:text-blue-500`}
-                onClick={ () => router.push("/")}
-              >
-                Go to Home
-              </button>
-              <button
-                className={`w-40
-                          justify-self-center
-                          p-1 mb-4
-                        text-blue-500
-                          border border-blue-500 rounded
-                        hover:bg-white hover:text-blue-500`}
-                onClick={() => signOut()}
-              >
-                Sign out
-              </button>
-            </div>
+            <form onSubmit={submit}>
+                <label>
+                    Nickname:
+                    <input type="text" value={nickname} onChange={e => setNickname(e.target.value)} required />
+                </label>
+                <label>
+                    MBTI:
+                    <input type="text" value={mbti} onChange={e => setMbti(e.target.value)} required />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
           ) : (
             <div className="grid m-auto text-center">
               <div className="m-4">Not signed in</div>
@@ -88,5 +89,5 @@ export default function Signin() {
             </div>
           )}
         </div>
-      );
+    );
 }
