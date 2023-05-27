@@ -16,6 +16,11 @@ export default function Signin() {
               if (doc.exists) {
                   setUser(doc.data());
                   console.log("Document data:", doc.data());
+
+                  if(userDoc.mbti === "") {
+                    router.push('/auth/signin/ask'); // if mbti is empty, redirect to ask
+                  }
+                  
               } else {
                   firebase.firestore().collection("users").doc(session.user.email).set({
                       name: session.user.name,

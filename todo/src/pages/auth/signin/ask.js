@@ -1,7 +1,6 @@
-// This is a simplified example and should be replaced by your actual form
 import { useSession } from "next-auth/react";
 import firebase from "@/firebase/index.js";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 export default function Ask() {
@@ -10,14 +9,30 @@ export default function Ask() {
     const [mbti, setMbti] = useState("");
     const [nickname, setNickname] = useState("");
     
+    useEffect(() => {
+        if(session){
+            const docRef = firebase.firestore().collection("users").doc(session.user.email);
+            
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    setNickname(userData.nickname);
+                    setMbti(userData.mbti);
+                } 
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        }
+    }, [session]);
+
     const submit = async (e) => {
         e.preventDefault();
         const docRef = firebase.firestore().collection("users").doc(session.user.email);
         
-        docRef.update({
+        docRef.set({
             nickname: nickname,
             mbti: mbti
-        })
+        }, { merge: true })
         .then(() => {
             console.log("Document successfully updated!");
             router.push('/auth/signin'); // redirect back to home
