@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/react";
-import firebase from "@/firebase/index.js";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
