@@ -1,15 +1,47 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
+import firebase from "@/firebase/index.js";
+import { useEffect } from 'react';
 
 export default function Signin() {
     const router = useRouter();
     const { data : session } = useSession();
+    const [user, setUser] = useState(null); // Add this line at the top of your component
 
+    useEffect(() => {
+      if(session){
+          const docRef = firebase.firestore().collection("users").doc(session.user.email);
+          
+          docRef.get().then((doc) => {
+              if (doc.exists) {
+                  setUser(doc.data());
+                  console.log("Document data:", doc.data());
+              } else {
+                  firebase.firestore().collection("users").doc(session.user.email).set({
+                      name: session.user.name,
+                      email: session.user.email,
+                      mbti: '', // initially empty
+                      nickname: '' // initially empty
+                  })
+                  .then(() => {
+                      console.log("Document successfully written!");
+                      router.push('/auth/ask'); // redirect to the page to ask for mbti and nickname
+                  })
+                  .catch((error) => {
+                      console.error("Error writing document: ", error);
+                  });
+              }
+          }).catch((error) => {
+              console.log("Error getting document:", error);
+          });
+      }
+    }, [session]);
+  
     return (
         <div className="flex justify-center h-screen">
           {session ? (
             <div className="grid m-auto text-center">
-              <div className="m-4">Signed in as {session.user.name? session.user.name : session.user.email}</div>
+              <div className="m-4">Signed in as {user.mbti} {user.nickname}</div>
               <button
                 className={`w-40
                           justify-self-center
