@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
-import firebase from "@/firebase/index.js";
 import { useEffect } from 'react';
 
 export default function Signin() {
