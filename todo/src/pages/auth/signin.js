@@ -1,28 +1,31 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { db } from "@/firebase/index.js"; // the path to your firebase.js file
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { db } from "@/firebase/index.js";
 
 export default function Signin() {
     const router = useRouter();
     const { data : session } = useSession();
-
+    const [user, setUser] = useState(null);
+    
     useEffect(() => {
         if(session){
-            // Fetch the Firestore document
             const docRef = db.collection("users").doc(session.user.email);
-
+            
             docRef.get().then((doc) => {
                 if (doc.exists) {
-                    console.log("Document data:", doc.data());
+                    setUser(doc.data());
                 } else {
-                    // If no document exists, create a new one with the user's session information
                     db.collection("users").doc(session.user.email).set({
                         name: session.user.name,
                         email: session.user.email
                     })
                     .then(() => {
                         console.log("Document successfully written!");
+                        setUser({
+                          name: session.user.name,
+                          email: session.user.email
+                        });
                     })
                     .catch((error) => {
                         console.error("Error writing document: ", error);
@@ -38,7 +41,7 @@ export default function Signin() {
         <div className="flex justify-center h-screen">
           {session ? (
             <div className="grid m-auto text-center">
-              <div className="m-4">Signed in as {session.user.name? session.user.name : session.user.email}</div>
+              <div className="m-4">Signed in as {user ? user.name : 'Loading...'}</div>
               <button
                 className={`w-40
                           justify-self-center
@@ -79,5 +82,5 @@ export default function Signin() {
             </div>
           )}
         </div>
-      );
+    );
 }
