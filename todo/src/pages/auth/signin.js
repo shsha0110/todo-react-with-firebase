@@ -47,7 +47,6 @@ export default function Signin() {
           {session ? (
             <div className="grid m-auto text-center">
               <div className="m-4">Signed in as {user ? `${user.mbti} ${user.nickname}` : 'Loading...'}</div>
-              <div className="m-4">Signed in as {user.mbti} {user.nickname}</div>
               <button
                 className={`w-40
                           justify-self-center
