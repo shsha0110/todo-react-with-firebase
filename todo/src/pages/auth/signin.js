@@ -17,9 +17,9 @@ export default function Signin() {
                   setUser(doc.data());
                   console.log("Document data:", doc.data());
 
-                  if(userDoc.mbti === null || userDoc.mbti === "") {
-                    router.push('/auth/signedIn/ask'); // if mbti is empty, redirect to ask
-                  }
+                  // if(userDoc.mbti === null || userDoc.mbti === "") {
+                  //   router.push('/auth/signedIn/ask'); // if mbti is empty, redirect to ask
+                  // }
 
               } else {
                   db.collection("users").doc(session.user.email).set({
