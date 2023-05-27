@@ -22,6 +22,7 @@ export default function Signin() {
                   // }
 
               } else {
+                  console.log(db.collection("users").doc(session.user.email))
                   db.collection("users").doc(session.user.email).set({
                       name: session.user.name,
                       email: session.user.email,
