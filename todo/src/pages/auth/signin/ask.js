@@ -20,7 +20,7 @@ export default function Ask() {
         })
         .then(() => {
             console.log("Document successfully updated!");
-            router.push('/'); // redirect back to home
+            router.push('/auth/signin'); // redirect back to home
         })
         .catch((error) => {
             console.error("Error updating document: ", error);
