@@ -17,7 +17,7 @@ export default function Signin() {
                   setUser(doc.data());
                   console.log("Document data:", doc.data());
 
-                  if(userDoc.mbti === "") {
+                  if(userDoc.mbti === null || userDoc.mbti === "") {
                     router.push('/auth/signin/ask'); // if mbti is empty, redirect to ask
                   }
 
