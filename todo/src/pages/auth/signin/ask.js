@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { auth, db } from "@/firebase/index.js";
 
 export default function Ask() {
     const router = useRouter();
@@ -10,7 +11,7 @@ export default function Ask() {
     
     useEffect(() => {
         if(session){
-            const docRef = firebase.firestore().collection("users").doc(session.user.email);
+            const docRef = db.collection("users").doc(session.user.email);
             
             docRef.get().then((doc) => {
                 if (doc.exists) {
@@ -26,7 +27,7 @@ export default function Ask() {
 
     const submit = async (e) => {
         e.preventDefault();
-        const docRef = firebase.firestore().collection("users").doc(session.user.email);
+        const docRef = db.collection("users").doc(session.user.email);
         
         docRef.set({
             nickname: nickname,

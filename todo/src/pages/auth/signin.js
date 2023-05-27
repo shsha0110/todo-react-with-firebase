@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from 'react';
+import { auth, db } from "@/firebase/index.js";
 
 export default function Signin() {
     const router = useRouter();
@@ -9,7 +10,7 @@ export default function Signin() {
 
     useEffect(() => {
       if(session){
-          const docRef = firebase.firestore().collection("users").doc(session.user.email);
+          const docRef = db.collection("users").doc(session.user.email);
           
           docRef.get().then((doc) => {
               if (doc.exists) {
@@ -21,7 +22,7 @@ export default function Signin() {
                   }
 
               } else {
-                  firebase.firestore().collection("users").doc(session.user.email).set({
+                  db.collection("users").doc(session.user.email).set({
                       name: session.user.name,
                       email: session.user.email,
                       mbti: '', // initially empty
