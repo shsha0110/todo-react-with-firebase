@@ -29,7 +29,7 @@ export default function SignedIn() {
       {user && user.mbti ? (
         <div className="grid m-auto text-center">
           <div className="m-4">
-            {user.mbti} {user.name}님 환영합니다.
+            {user.mbti} {user.name ? user.name : user.email}님 환영합니다.
           </div>
           <button
             className={`w-40
