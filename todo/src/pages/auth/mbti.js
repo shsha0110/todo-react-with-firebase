@@ -42,6 +42,7 @@ export default function Mbti() {
                       border border-blue-500 rounded
                     hover:bg-white hover:text-blue-500`}
             type="submit"
+            onClick={() => router.push("/auth/sign-in")}
           >
             Submit
           </button>
