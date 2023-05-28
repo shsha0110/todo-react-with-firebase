@@ -11,10 +11,17 @@ export default function Signin() {
 
   async function updateUserMbti(uid, mbti) {
     const userRef = doc(db, 'users', uid);
-    await updateDoc(userRef, { mbti });
+    const userSnapshot = await getDoc(userRef);
+  
+    if (userSnapshot.exists()) {
+      await updateDoc(userRef, { mbti });
+    } else {
+      await setDoc(userRef, { uid, mbti });
+    }
+
     router.push("/auth/signedin");
   }
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (session) {
