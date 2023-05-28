@@ -18,8 +18,8 @@ export default function Signin() {
     } else {
       await setDoc(userRef, { uid, mbti });
     }
-
-    router.push("/auth/signedin");
+    // Force session update after modifying the user document
+   signIn('credentials', { callbackUrl: '/auth/signedin' });
   }
   
   const handleSubmit = async (event) => {
