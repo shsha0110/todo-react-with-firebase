@@ -23,11 +23,14 @@ export default function Signin() {
   const router = useRouter();
   const { data: session } = useSession();
 
+
   return (
     <div className="flex justify-center h-screen">
       {session ? (
         <div className="grid m-auto text-center">
-          <div className="m-4">Signed in as {session.user.name}</div>
+          <div className="m-4">
+            {session.user.mbti} {session.user.name}님 환영합니다.
+          </div>
           {!session.user.mbti && (
             <button
               className={`w-40
@@ -36,7 +39,7 @@ export default function Signin() {
                         bg-blue-500 text-white
                           border border-blue-500 rounded
                         hover:bg-white hover:text-blue-500`}
-              onClick={() => router.push("/mbti")}
+              onClick={() => router.push("/auth/mbti")}
             >
               Fill in your MBTI
             </button>
