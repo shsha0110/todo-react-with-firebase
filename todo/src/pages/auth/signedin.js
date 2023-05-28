@@ -36,7 +36,20 @@ export default function SignedIn() {
           </button>
         </div>
       ) : (
-        router.push("/auth/signin")
+            <div className="grid m-auto text-center">
+              <div className="m-4">Not signed in</div>
+              <button
+                className={`w-40
+                          justify-self-center
+                          p-1 mb-4
+                        bg-blue-500 text-white
+                          border border-blue-500 rounded
+                        hover:bg-white hover:text-blue-500`}
+                onClick={() => signIn()}
+              >
+                Sign in
+              </button>
+            </div>
       )}
     </div>
   );

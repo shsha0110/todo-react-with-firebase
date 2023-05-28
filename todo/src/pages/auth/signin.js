@@ -12,7 +12,7 @@ export default function Signin() {
   async function updateUserMbti(uid, mbti) {
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, { mbti });
-    router.push("/auth/signedin");
+    router.push("/signedin");
   }
 
   const handleSubmit = async (event) => {
@@ -39,7 +39,7 @@ export default function Signin() {
               </form>
             </>
           ) : (
-            router.push("/auth/signedin")
+            router.push("/signedin")
           )}
         </div>
       ) : (
