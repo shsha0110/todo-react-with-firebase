@@ -19,7 +19,7 @@ export default function Signin() {
       await setDoc(userRef, { uid, mbti });
     }
     // Force session update after modifying the user document
-   signIn('credentials', { callbackUrl: '/auth/signedin' });
+    signIn('credentials', { callbackUrl: '/auth/signedin' });
   }
   
   const handleSubmit = async (event) => {
