@@ -9,23 +9,24 @@ export default function Signin() {
   const { data: session } = useSession();
   const [mbti, setMbti] = useState("");
 
-  async function updateUserMbti(uid, mbti) {
+  async function updateUserMbti(uid, mbti, name) {
     const userRef = doc(db, 'users', uid);
     const userSnapshot = await getDoc(userRef);
   
     if (userSnapshot.exists()) {
-      await updateDoc(userRef, { mbti });
+      await updateDoc(userRef, { mbti, name });
     } else {
-      await setDoc(userRef, { uid, mbti });
+      await setDoc(userRef, { uid, mbti, name });
     }
+
     // Force session update after modifying the user document
     signIn('credentials', { callbackUrl: '/auth/signedin' });
   }
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (session) {
-      await updateUserMbti(session.user.id, mbti);
+      await updateUserMbti(session.user.id, mbti, session.user.name);
     }
   };
 
