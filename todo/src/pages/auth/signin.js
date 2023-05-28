@@ -1,71 +1,46 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from '@/firebase/index.js';
-
-async function createUser(uid, data) {
-  const userRef = doc(db, 'users', uid);
-  const docSnap = await getDoc(userRef);
-
-  if (!docSnap.exists()) { // Check if the user doesn't exist
-    await setDoc(userRef, { uid, ...data }); // Only then create the user
-  }
-}
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    createUser(user.uid, { name: user.displayName, email: user.email });
-  }
-});
+import { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from '@/firebase/index.js';
 
 export default function Signin() {
   const router = useRouter();
   const { data: session } = useSession();
+  const [mbti, setMbti] = useState("");
 
+  async function updateUserMbti(uid, mbti) {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, { mbti });
+    router.push("/auth/signedin");
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (session) {
+      await updateUserMbti(session.user.id, mbti);
+    }
+  };
 
   return (
     <div className="flex justify-center h-screen">
       {session ? (
         <div className="grid m-auto text-center">
-          <div className="m-4">
-            {session.user.mbti} {session.user.name}님 환영합니다.
-          </div>
-          {!session.user.mbti && (
-            <button
-              className={`w-40
-                          justify-self-center
-                          p-1 mb-4
-                        bg-blue-500 text-white
-                          border border-blue-500 rounded
-                        hover:bg-white hover:text-blue-500`}
-              onClick={() => router.push("/auth/mbti")}
-            >
-              Fill in your MBTI
-            </button>
+          {!session.user.mbti ? (
+            <>
+              <div className="m-4">당신의 MBTI를 입력해주세요!</div>
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  onChange={(e) => setMbti(e.target.value)}
+                  value={mbti}
+                />
+                <button type="submit">Submit</button>
+              </form>
+            </>
+          ) : (
+            router.push("/auth/signedin")
           )}
-          <button
-            className={`w-40
-                      justify-self-center
-                      p-1 mb-4
-                    bg-blue-500 text-white
-                      border border-blue-500 rounded
-                    hover:bg-white hover:text-blue-500`}
-            onClick={() => router.push("/")}
-          >
-            Go to Home
-          </button>
-          <button
-            className={`w-40
-                      justify-self-center
-                      p-1 mb-4
-                    text-blue-500
-                      border border-blue-500 rounded
-                    hover:bg-white hover:text-blue-500`}
-            onClick={() => signOut()}
-          >
-            Sign out
-          </button>
         </div>
       ) : (
         <div className="grid m-auto text-center">
