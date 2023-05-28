@@ -1,18 +1,35 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from '@/firebase/index.js';
 
 export default function SignedIn() {
   const router = useRouter();
   const { data: session } = useSession();
+  const [user, setUser] = useState(null);
 
-  history.go(0);
+  useEffect(() => {
+    async function fetchUser() {
+      if (session) {
+        const userRef = doc(db, 'users', session.user.id);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          setUser(userDoc.data());
+        }
+      }
+    }
+
+    fetchUser();
+  }, [session]);
 
   return (
     <div className="flex justify-center h-screen">
-      {session && session.user.mbti ? (
+      {user && user.mbti ? (
         <div className="grid m-auto text-center">
           <div className="m-4">
-            {session.user.mbti} {session.user.name}님 환영합니다.
+            {user.mbti} {user.name}님 환영합니다.
           </div>
           <button
             className={`w-40
