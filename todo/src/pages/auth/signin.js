@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from '@/firebase/index.js';
 
 export default function Signin() {
