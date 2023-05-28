@@ -34,11 +34,11 @@ export default function Signin() {
                   onChange={(e) => setMbti(e.target.value)}
                   value={mbti}
                 />
-                <button type="submit" onClick={() => router.push("/signedin")}>Submit</button>
+                <button type="submit" onClick={() => router.push("/auth/signedin")}>Submit</button>
               </form>
             </>
           ) : (
-            router.push("/signedin")
+            router.push("/auth/signedin")
           )}
         </div>
       ) : (
