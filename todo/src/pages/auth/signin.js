@@ -40,10 +40,21 @@ export default function Signin() {
               <form onSubmit={handleSubmit}>
                 <input
                   type="text"
+                  className="p-1 border border-gray-300"
                   onChange={(e) => setMbti(e.target.value)}
                   value={mbti}
                 />
-                <button type="submit">Submit</button>
+                <button 
+                  type="submit" 
+                  className={`w-40
+                    justify-self-center
+                    p-1 mt-4
+                    bg-blue-500 text-white
+                    border border-blue-500 rounded
+                    hover:bg-white hover:text-blue-500`}
+                >
+                  Submit
+                </button>
               </form>
             </>
           ) : (
