@@ -12,6 +12,7 @@ export default function Signin() {
   async function updateUserMbti(uid, mbti) {
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, { mbti });
+    router.push("/auth/signedin");
   }
 
   const handleSubmit = async (event) => {
@@ -34,7 +35,7 @@ export default function Signin() {
                   onChange={(e) => setMbti(e.target.value)}
                   value={mbti}
                 />
-                <button type="submit" onClick={() => router.push("/auth/signedin")}>Submit</button>
+                <button type="submit">Submit</button>
               </form>
             </>
           ) : (
