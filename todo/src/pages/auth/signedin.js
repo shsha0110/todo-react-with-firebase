@@ -5,6 +5,9 @@ export default function SignedIn() {
   const router = useRouter();
   const { data: session } = useSession();
 
+  window.location.reload();
+
+
   return (
     <div className="flex justify-center h-screen">
       {session && session.user.mbti ? (
