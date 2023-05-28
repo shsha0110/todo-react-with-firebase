@@ -18,7 +18,7 @@ export default function Mbti() {
     event.preventDefault();
     if (session) {
       await updateUserMbti(session.user.id, mbti);
-      router.push("/");
+      router.push("/auth/signin");
     }
   };
 
