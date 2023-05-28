@@ -28,6 +28,19 @@ export default function Signin() {
       {session ? (
         <div className="grid m-auto text-center">
           <div className="m-4">Signed in as {session.user.name}</div>
+          {!session.user.mbti && (
+            <button
+              className={`w-40
+                          justify-self-center
+                          p-1 mb-4
+                        bg-blue-500 text-white
+                          border border-blue-500 rounded
+                        hover:bg-white hover:text-blue-500`}
+              onClick={() => router.push("/mbti")}
+            >
+              Fill in your MBTI
+            </button>
+          )}
           <button
             className={`w-40
                       justify-self-center
