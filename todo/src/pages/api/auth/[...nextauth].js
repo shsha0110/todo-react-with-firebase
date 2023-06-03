@@ -1,7 +1,8 @@
-import { GoogleAuthProvider } from "firebase/auth";
 import NextAuth from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 
 export default NextAuth({
@@ -32,7 +33,7 @@ export default NextAuth({
         }
       },
     }),
-    
+
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
